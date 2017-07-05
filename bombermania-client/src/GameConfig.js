@@ -4,9 +4,9 @@ var CONFIG = {
 
 	base_velocity: 100,
 
-	velocity_threshold: 160,
+	velocity_threshold: 162,
 
-	velocity_increment: 32,
+	velocity_increment: 31,
 
 	blast_threshold: 10,
 
@@ -14,6 +14,6 @@ var CONFIG = {
 
 	invincibility_time: 10000,
 
-	powerup_disappear_countdown: 7000,
+	powerup_disappear_countdown: 15000,
 
 }

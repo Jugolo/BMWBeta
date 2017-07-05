@@ -49,6 +49,7 @@ Retoosh.Game.prototype = {
 		this.is_game_started = false;
 		this.updateIterator = 0;
         this.isSpaceKeyPressed = false;
+        this.nextRound = false;
 
 		/*
 		-----------------------------------------------------
@@ -325,7 +326,7 @@ Retoosh.Game.prototype = {
 							}
 							else {
                                 //this value handles the auto movement along edges
-								if(in_tile_y > c_area.bottom + 0.06 && blockers.lefbottom) final_direction = "up", keys_direction = "up";
+								if(in_tile_y > c_area.bottom + 0.05 && blockers.lefbottom) final_direction = "up", keys_direction = "up";
 								else if(in_tile_y < c_area.top - 0.05 && blockers.leftop) final_direction = "down", keys_direction = "down";
                                 // if(in_tile_y > c_area.bottom + 0.05 && blockers.lefbottom) final_direction = "certain";
 								// else if(in_tile_y < c_area.top - 0.05 && blockers.leftop) final_direction = "certain";
@@ -484,7 +485,7 @@ Retoosh.Game.prototype = {
 		                // 	}
 		                // 	break;
 				default:
-                    if(lefcenter && rigcenter) {
+                    if((lefcenter === "indestructable" || lefcenter === "destructable") && (rigcenter === "indestructable" || rigcenter === "destructable")) {
                         if (keys_direction.indexOf("up") >= 0) {
                             if (topcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "up", keys_direction = "up";
@@ -492,7 +493,7 @@ Retoosh.Game.prototype = {
                             if (botcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "down", keys_direction = "down";
                         }
-                    } else if (botcenter && topcenter) {
+                    } else if ((botcenter === "indestructable" || botcenter === "destructable") && (topcenter === "indestructable" || topcenter === "destructable")) {
                         if (keys_direction.indexOf("left") >= 0) {
                             if (lefcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "left", keys_direction = "left";
@@ -500,7 +501,7 @@ Retoosh.Game.prototype = {
                             if (rigcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "right", keys_direction = "right";
                         }
-                    } else if(lefcenter && tiled_pos.col + 1 >= this.map.cols) {
+                    } else if((lefcenter === "indestructable" || lefcenter === "destructable" ) && tiled_pos.col + 1 >= this.map.cols) {
                         if (keys_direction.indexOf("up") >= 0) {
                             if (topcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "up", keys_direction = "up";
@@ -508,7 +509,7 @@ Retoosh.Game.prototype = {
                             if (botcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "down", keys_direction = "down";
                         }
-                    } else if(rigcenter && tiled_pos.col - 1 < 0) {
+                    } else if((rigcenter === "indestructable" || rigcenter === "destructable") && tiled_pos.col - 1 < 0) {
                         if (keys_direction.indexOf("up") >= 0) {
                             if (topcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "up", keys_direction = "up";
@@ -516,7 +517,7 @@ Retoosh.Game.prototype = {
                             if (botcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "down", keys_direction = "down";
                         }
-                    } else if(botcenter && tiled_pos.row - 1 < 0) {
+                    } else if((botcenter === "indestructable" || botcenter === "destructable") && tiled_pos.row - 1 < 0) {
                         if (keys_direction.indexOf("left") >= 0) {
                             if (lefcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "left", keys_direction = "left";
@@ -524,7 +525,7 @@ Retoosh.Game.prototype = {
                             if (rigcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "right", keys_direction = "right";
                         }
-                    } else if(topcenter && tiled_pos.row + 1 >= this.map.rows) {
+                    } else if((topcenter === "indestructable" || topcenter === "destructable") && tiled_pos.row + 1 >= this.map.rows) {
                         if (keys_direction.indexOf("left") >= 0) {
                             if (lefcenter) final_direction = "idle", keys_direction = "none";
                             else final_direction = "left", keys_direction = "left";
@@ -581,16 +582,25 @@ Retoosh.Game.prototype = {
             var object = this.map.objects[tiled_pos.col][tiled_pos.row];
 
             if (object.type == "bomb") {
-                if(this.avatar.serial > object.serial && keys_direction == object.dir) {
-                    final_direction = "idle", keys_direction = "none";
+                if (keys_direction == "left") {
+                    if(this.avatar.serial > object.serial && keys_direction == object.dir && in_tile_x > 0.9) {
+                        final_direction = "idle", keys_direction = "none";
+                    }
+                } else if (keys_direction == "right") {
+                    if(this.avatar.serial > object.serial && keys_direction == object.dir && in_tile_x < 0.1) {
+                        final_direction = "idle", keys_direction = "none";
+                    }
+                } else if (keys_direction == "up") {
+                    if(this.avatar.serial > object.serial && keys_direction == object.dir && in_tile_y > 0.9) {
+                        final_direction = "idle", keys_direction = "none";
+                    }
+                } else if (keys_direction == "down") {
+                    if(this.avatar.serial > object.serial && keys_direction == object.dir && in_tile_y < 0.1) {
+                        final_direction = "idle", keys_direction = "none";
+                    }
                 }
             };
              
-			// if(in_tile_x > c_area.left && in_tile_x < c_area.right )
-			// 	this.avatar.x = (tiled_pos.col + 0.5) * TILE_SIZE;
-      
-			// if(in_tile_y > c_area.top && in_tile_y < c_area.bottom )
-			// 	this.avatar.y = (tiled_pos.row + 0.5) * TILE_SIZE;
 
 
 
@@ -717,14 +727,21 @@ Retoosh.Game.prototype = {
 	onBombermanInExplosion: function(bomberman, explosion){
 		console.log(bomberman.is_invincible, bomberman.is_dead, bomberman.is_dying, bomberman.is_infire);
 		//if(bomberman.is_invincible || bomberman.is_dead || bomberman.is_dying) return;
-        if(bomberman.is_invincible || bomberman.is_infire) return;
+		console.log(bomberman.serial," in explosion", bomberman.is_infire);
 
-		console.log(bomberman.serial," in explosion")
-		SOCKET.emit('player death', {
-			victim_serial: bomberman.serial,
-			killer_serial: explosion.owner.serial
-		});
-        bomberman.is_infire = true;
+        if (bomberman.is_infire == 0) {
+            bomberman.countInFire();    
+        }
+        
+        bomberman.is_infire++;
+        if(bomberman.is_invincible) return;
+        if (bomberman.is_infire > 12 && !bomberman.is_dying && !bomberman.is_dead) {
+		    SOCKET.emit('player death', {
+			    victim_serial: bomberman.serial,
+			    killer_serial: explosion.owner.serial
+		    });
+            bomberman.is_dying = true;
+        }
         //bomberman.is_dying = true;
 		/*
 		if(!avatar.is_dying) SOCKET_CLIENT.emit('player death', {
@@ -859,6 +876,7 @@ Retoosh.Game.prototype = {
 			}
 
 			this.map.destroy();
+            		this.nextRound = true;
 		}
 
 		var map_data = this.room.map;
@@ -904,6 +922,7 @@ Retoosh.Game.prototype = {
 
 		this.game.world.bringToTop(this.chat_panel);
 		this.game.world.bringToTop(this.message_sender);
+        	if(this.nextRound) this.respawnAvatar();
 	},
 
 	stopBeingHost: function(){
@@ -934,6 +953,7 @@ Retoosh.Game.prototype = {
 
 	startBeingHost: function( data/*timestamp*/ ){
 		console.log('Resume host countdowns!');
+        var timestamp = 0;
         if (data != undefined) {
             timestamp = data.timestamp;
             /*

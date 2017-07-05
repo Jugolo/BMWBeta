@@ -90,7 +90,7 @@ Retoosh.Main.prototype = {
         play_btn.y = ( Retoosh.HEIGHT - play_btn.height ) * 0.5 + 130;
 
         play_btn.onPress = function(){
-          USERNAME = "Guest"; //nickname == "" ? upper_menu.getUsername() : nickname;
+         USERNAME = "Guest*"+ Math.floor(Math.random() * 9540) + 1 ; //nickname == "" ? upper_menu.getUsername() : nickname;
 
           SOCKET.emit("room request", {name: USERNAME});
           //this.game.state.start('Game');
@@ -316,3 +316,4 @@ Retoosh.Main.prototype = {
     }
 
 };
+

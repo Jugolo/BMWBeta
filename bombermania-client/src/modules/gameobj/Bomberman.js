@@ -22,12 +22,11 @@ function Bomberman(game){
 	this.is_invincible = false;
 	this.i_animation = false;
 	this.i_countdown = false;
-    this.i_deathtimer = false;
-	this.i_timestamp = 0;
+ 	this.i_timestamp = 0;
 
 	this.is_dying = false;
 	this.is_dead = true;
-    this.is_infire = true;
+    this.is_infire = 0;
 
 	this.width = TILE_SIZE * 1.15;
 	this.scale.y = this.scale.x;
@@ -99,13 +98,27 @@ function Bomberman(game){
 		this.is_invincible = flag;
 	};
 
+    
+	this.countInFire = function() {
+		game.time.events.add(1300, function() {
+		    console.log("countInFire", this.is_infire);
+		    this.is_infire = 0;
+		}, this);
+	};
+
 	this.setTint = function(tint_color){
 		this.color = tint_color;
 		this.tint_sprite.tint = tint_color;
 	};
 
+
 	this.plantBomb = function( map ){
 		if(this.is_dead || this.is_dying || this.is_invincible) return;
+
+	this.plantBomb = function( map, direction ){
+		if(this.is_dead || this.is_dying) return;
+        	if(this.is_invincible && this.is_infire > 0) return;
+
 
 		var tp = this.getTiledPosition();
 		if(map.objects[tp.col][tp.row] || this.bombs_planted >= this.bombs_capacity) return;
@@ -114,7 +127,8 @@ function Bomberman(game){
 			owner_serial: this.serial,
 			blast_power: this.blast_power,
 			col: tp.col,
-			row: tp.row
+			row: tp.row,
+            dir: direction
 		});
 
 		this.bombs_planted++;
@@ -123,36 +137,33 @@ function Bomberman(game){
 	};
 
 	this.die = function( nickname_label ){
-        this.i_deathtimer = game.time.events.add( 200, function(){
-            this.game.add.audio('death_snd').play();
+		this.game.add.audio('death_snd').play();
 
-            this.is_dying = true;
-            console.log("die", this.is_dying);
+		this.is_dying = true;
+		console.log("die", this.is_dying);
 
-            this.death_animation = this.playAnimation('death', 1.5, false);
-            // if(this.death_animation){
-                this.death_animation.onComplete.add(function(){
-                    var animation_iterator = 0;
-                    var blinking_speed = 300;
-                    var last_iteration = 10;
+		this.death_animation = this.playAnimation('death', 1.5, false);
+		// if(this.death_animation){
+		    this.death_animation.onComplete.add(function(){
+			var animation_iterator = 0;
+			var blinking_speed = 300;
+			var last_iteration = 10;
 
-                    var blinking_timer = this.game.time.events.repeat(300, last_iteration, function(){
-                        animation_iterator++;
+			var blinking_timer = this.game.time.events.repeat(300, last_iteration, function(){
+			    animation_iterator++;
 
-                        console.log("death_animation", animation_iterator);
-                        if(animation_iterator < last_iteration)
-                            this.alpha = this.alpha == 1 ? 0 : 1;
-                        else {
-                            this.alpha = 1;
-                            this.killProperly();
-                            nickname_label.visible = false;
-                        }
-                    }, this);
+			    console.log("death_animation", animation_iterator);
+			    if(animation_iterator < last_iteration)
+				this.alpha = this.alpha == 1 ? 0 : 1;
+			    else {
+				this.alpha = 1;
+				this.killProperly();
+				nickname_label.visible = false;
+			    }
+			}, this);
 
-                }, this);
-            // }
-        }, this );
-
+		    }, this);
+		// }
 	};
 
 	this.resetUpgrades = function(){
@@ -163,7 +174,8 @@ function Bomberman(game){
 
 	this.revive = function(col, row){
 		this.is_dead = false;
-        this.is_infire = false;
+        	this.is_dying = false;
+        	this.is_infire = 0;
 		this.resetUpgrades();
 		this.reset(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2);
 
@@ -174,7 +186,7 @@ function Bomberman(game){
 
 	this.killProperly = function(){
 		if(this.death_animation) this.death_animation.onComplete.removeAll();
-        if(this.i_deathtimer) this.game.time.events.remove( this.i_deathtimer );
+        	this.is_infire = 0;
 		this.is_dead = true;
 		this.is_dying = false;
 		this.kill();

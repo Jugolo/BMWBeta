@@ -1,8 +1,8 @@
-var EXPLOSION_TIME = 1100; // how long explosion fire remains on map
+var EXPLOSION_TIME = 1060; // how long explosion fire remains on map
 var EXPANSION_TIME = 70; // how fast explosion fire expands
-var EXTINCTION_TIME = 9; // how fast explosion fire extincs
+var EXTINCTION_TIME = 70; // how fast explosion fire extincs
 
-function Bomb(game, owner, map, force, serial){
+function Bomb(game, owner, map, force, serial, direction){
 	Phaser.Sprite.call(this, game, 0, 0, 'ingame', "bomb/000");
     
 	this.game = game;
@@ -11,8 +11,9 @@ function Bomb(game, owner, map, force, serial){
 
 	this.type = "bomb";
     this.serial = serial;
+    this.dir = direction;
 	this.anchor = { x: 0.5, y: 0.5 };
-	this.width = TILE_SIZE * 0.95;
+	this.width = TILE_SIZE * 1.05;
 	this.scale.y = this.scale.x;
 	this.smoothed = false;
 
@@ -86,7 +87,7 @@ Bomb.prototype.explode = function( timestamp, excluded_direction ){
 				//extinction_delay += e_data.last * EXPANSION_TIME - fire_delay; // compensate late explosion
 				//extinction_delay += ( e_data.last - (s - e_data.start) % (e_data.last + 1) ) * EXTINCTION_TIME;
 
-				var explosion_segment = new ExplosionSprite(this.game, this, e_data.direction, fire_delay, extinction_delay, e_data, timestamp);
+				var explosion_segment = new ExplosionSprite(this.game, this, e_data.direction, fire_delay, extinction_delay, e_data, timestamp, explosion_chain);
 				explosion_segment.x = ( e_data.col + 0.5 ) * TILE_SIZE;
 				explosion_segment.y = ( e_data.row + 0.5 ) * TILE_SIZE;
 				this.map.explosions.add(explosion_segment);
@@ -114,7 +115,7 @@ Bomb.prototype.areDirectionsSame = function(dir1, dir2){
 	return dir1[0] == dir2[0] && dir1[1] == dir2[1];
 }
 
-function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, explosion_data, timestamp){
+function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, explosion_data, timestamp, chain){
 	Phaser.Sprite.call(this, game, 0, 0, 'ingame', "explosion/fire/000");
 
 	this.owner = bomb.owner;
@@ -154,10 +155,13 @@ function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, ex
 
 	this.animations.play('spark-center', 1, false);
 
+    	if(!this.game) return; 
 	this.game.time.events.add(fire_delay, function(){
 		this.animations.play('spark-edge', 1, false);
 
+    		if(!this.game) return; 
 		this.game.time.events.add(EXPANSION_TIME, function(){
+    			if(!this.game) return; 
 			this.animations.play(direction, 14, true);
 
 			game.physics.arcade.enable(this);
@@ -176,6 +180,24 @@ function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, ex
                         else if (direction == "right") direction = "left";
                         else if (direction == "top") direction = "bottom";
                         else if (direction == "bottom") direction = "top";
+                        for( var s = 0; s < chain.steps.length; s++ ){
+                            for( var t = 0; t < chain.steps[s].length; t++ ){
+                                var explosion = chain.steps[s][t];
+                                if(direction == explosion.direction) {
+                                    last_explosion = explosion;
+                                }
+                            }
+                        }
+                        var last_obj = bomb.map.objects[last_explosion.col][last_explosion.row];
+                        if(last_obj) {
+                            if(last_obj.type != "destructable" && bomb.force < obj.force) {
+                                direction = "none";    
+                            }
+                        } else {
+                            if(bomb.force < obj.force) {
+                                direction = "none";    
+                            }
+                        }
 						obj.emitExplosion(direction);
 						break;
 					case "destructable":

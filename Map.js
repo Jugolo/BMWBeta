@@ -66,18 +66,43 @@ function Map(){
 	var fillWith = function(tile_id, count){
 		var available_tiles = context.getAvailableTiles( tile_id, tile_map, tile_info, spawns );
 		count = Math.min(count, available_tiles.length);
-        if (tile_id == TileType.Destructable) count = available_tiles.length;
+        	if (tile_id == TileType.Destructable) count = available_tiles.length;
 
-		for(var i = 0; i < count; i++){
-			var random_index = Math.floor(Math.random() * available_tiles.length);
-			var random_tile = available_tiles[random_index];
+		if (tile_id == TileType.Indestructable) {
+		    var added_tiles = [];
+		    for(var i = 0; i < count; i++){
+		        //var random_index = Math.floor(Math.random() * available_tiles.length);
+			var min_index = i * 13;
+			var max_index = (i + 1) * 13;
+			max_index = Math.min(max_index, available_tiles.length);
+			min_index > max_index && (min_index = max_index - 13); 
+			var random_index = Math.floor((Math.random() * (max_index - min_index + 1)) + min_index);
+				    var random_tile = available_tiles[random_index];
 
-			var ri = random_tile.row * map.width + random_tile.col;
+			for(var j = 0; j < added_tiles.length; j++) {
+			    var add_tile = added_tiles[j];
+			    if (random_tile.row == add_tile.row || random_tile.col == add_tile.col) {
+				random_index = Math.floor(Math.random() * available_tiles.length);
+				random_tile = available_tiles[random_index];
+			    }
+			}
+
+		        var ri = random_tile.row * map.width + random_tile.col;
 			tile_info[ri] = tile_id;
 			tile_map[random_tile.col][random_tile.row] = tile_id;
 
-			// exclude tile from array of available ones
-			available_tiles.splice(random_index, 1);
+			added_tiles.push(random_tile);
+
+				    // exclude tile from array of available ones
+				    //available_tiles.splice(random_index, 1);
+		    }
+		} else {
+		    for(var i = 0; i < count; i++){
+			var tile = available_tiles[i];
+			var ri = tile.row * map.width + tile.col;
+			tile_info[ri] = tile_id;
+			tile_map[tile.col][tile.row] = tile_id;
+		    }
 		}
 	}
 
@@ -206,6 +231,13 @@ Map.prototype.getAvailableTiles = function( tile_id, tile_map, tile_info, spawn_
                         tile_info[ri] = tile_id;
                         tile_map[col][row - 1] = tile_id;
                     }
+                }
+            } else {
+                if ((row == 0 && col == tile_map.cols - 3) ||
+                    (row == 0 && col == 2) || (row == tile_map.rows - 1 && col == 2) ||
+                    (row == tile_map.rows - 1 && col == tile_map.cols - 3)) 
+                {
+                    is_tile_available = false;
                 }
             }
 
