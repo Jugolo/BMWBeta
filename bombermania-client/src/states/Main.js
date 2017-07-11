@@ -7,7 +7,7 @@ Retoosh.Main = function (game) {
 Retoosh.Main.prototype = {
     create: function () {
         var bg_group = this.game.add.group();
-        
+
         var header = this.game.add.sprite(0, 0, 'header');
         header.width = Retoosh.WIDTH;
         header.height = Retoosh.HEIGHT * 0.4;
@@ -38,13 +38,13 @@ Retoosh.Main.prototype = {
         right.inputEnabled = true;
         right.events.onInputDown.add(this.eventListener, this);
         bg_group.add(right);
-        
+
         var footer = this.game.add.sprite(0, 0, 'footer');
         footer.width = Retoosh.WIDTH;
         footer.height = Retoosh.HEIGHT * 0.07;
         footer.y = (header.height + center.height);
         footer.inputEnabled = true;
-        footer.input.useHandCursor = true; 
+        footer.input.useHandCursor = true;
         footer.events.onInputDown.add(function() {
             window.open("http://www.bomberworld.io", "_blank");
         }, this);
@@ -90,7 +90,10 @@ Retoosh.Main.prototype = {
         play_btn.y = ( Retoosh.HEIGHT - play_btn.height ) * 0.5 + 130;
 
         play_btn.onPress = function(){
-         USERNAME = "Guest*"+ Math.floor(Math.random() * 9540) + 1 ; //nickname == "" ? upper_menu.getUsername() : nickname;
+					SOCKET.removeListener("room found", this.onRoomFound);
+					game.state.start('Guest', true, false);
+					return;
+         USERNAME = "Guest*"+ Math.floor(Math.random() * 50) + 1 ; //nickname == "" ? upper_menu.getUsername() : nickname;
 
           SOCKET.emit("room request", {name: USERNAME});
           //this.game.state.start('Game');
@@ -196,7 +199,7 @@ Retoosh.Main.prototype = {
 
         member_btn.onPress = function(){
             if (window.sessionStorage['nickname'] == undefined) {
-                login_content.showLoginField() 
+                login_content.showLoginField()
                 context.toggleSignipPanel();
             } else {
                 var nickname = window.sessionStorage['nickname'];
@@ -210,7 +213,7 @@ Retoosh.Main.prototype = {
         };
 
         upper_menu.onSignipPress = function(){
-            login_content.showLoginField() 
+            login_content.showLoginField()
             context.toggleSignipPanel();
         };
 
@@ -219,7 +222,7 @@ Retoosh.Main.prototype = {
         Contacts panel
         -------------------------------------------------------
         */
-        
+
         this.contacts_panel = new TabbedPanel( this.game, panels_width, panels_height );
         this.contacts_panel.default_x = panels_margin / 2;
         this.contacts_panel.default_y = upper_menu.height + panels_margin;
@@ -265,7 +268,7 @@ Retoosh.Main.prototype = {
         if(signip_panel.is_shown){
             if (this.input.x > signip_panel.x && this.input.x < signip_panel.x + signip_panel.width
             && this.input.y > signip_panel.y && this.input.y < signip_panel.y + signip_panel.height) return;
-             
+
             signip_panel.is_toggled = true;
 
             var animation_tween = this.game.add.tween(signip_panel).to( {x: Retoosh.WIDTH, y: signip_panel.y},
@@ -316,4 +319,3 @@ Retoosh.Main.prototype = {
     }
 
 };
-

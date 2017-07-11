@@ -4,7 +4,7 @@ var EXTINCTION_TIME = 70; // how fast explosion fire extincs
 
 function Bomb(game, owner, map, force, serial, direction){
 	Phaser.Sprite.call(this, game, 0, 0, 'ingame', "bomb/000");
-    
+
 	this.game = game;
 	this.owner = owner;
 	this.map = map;
@@ -155,13 +155,13 @@ function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, ex
 
 	this.animations.play('spark-center', 1, false);
 
-    	if(!this.game) return; 
+    	if(!this.game) return;
 	this.game.time.events.add(fire_delay, function(){
 		this.animations.play('spark-edge', 1, false);
 
-    		if(!this.game) return; 
+    		if(!this.game) return;
 		this.game.time.events.add(EXPANSION_TIME, function(){
-    			if(!this.game) return; 
+    			if(!this.game) return;
 			this.animations.play(direction, 14, true);
 
 			game.physics.arcade.enable(this);
@@ -188,14 +188,14 @@ function ExplosionSprite(game, bomb, direction, fire_delay, extinction_delay, ex
                                 }
                             }
                         }
-                        var last_obj = bomb.map.objects[last_explosion.col][last_explosion.row];
+                        var last_obj =  bomb.map.objects[last_explosion.col][last_explosion.row];
                         if(last_obj) {
                             if(last_obj.type != "destructable" && bomb.force < obj.force) {
-                                direction = "none";    
+                                direction = "none";
                             }
                         } else {
                             if(bomb.force < obj.force) {
-                                direction = "none";    
+                                direction = "none";
                             }
                         }
 						obj.emitExplosion(direction);

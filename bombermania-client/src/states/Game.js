@@ -48,8 +48,8 @@ Retoosh.Game.prototype = {
 		var context = this;
 		this.is_game_started = false;
 		this.updateIterator = 0;
-        this.isSpaceKeyPressed = false;
-        this.nextRound = false;
+    this.isSpaceKeyPressed = false;
+    this.nextRound = false;
 
 		/*
 		-----------------------------------------------------
@@ -68,7 +68,7 @@ Retoosh.Game.prototype = {
 
 			// update bomberman status according to data from the server
 			var player_data = this.room.players[i];
-			
+
 
 			if(player_data){
                 var nickname = game.add.text(0, 0, player_data.name, { font: "22px Arial", fill: "#"+Phaser.Color.componentToHex(this.player_colors[i]) });
@@ -160,7 +160,7 @@ Retoosh.Game.prototype = {
 
 		this.spaceKey.onUp.add(function() {
             this.isSpaceKeyPressed = false;
-            if(this.key_timer) { 
+            if(this.key_timer) {
                 this.game.time.events.remove(this.key_timer);
                 this.key_timer = false;
             }
@@ -219,7 +219,7 @@ Retoosh.Game.prototype = {
                 if(IS_HOST) _this.stopBeingHost();
 
                 IS_FOCUSED = false;
-            if(_this.key_timer) { 
+            if(_this.key_timer) {
                 _this.game.time.events.remove(_this.key_timer);
                 _this.key_timer = false;
             }
@@ -227,11 +227,11 @@ Retoosh.Game.prototype = {
         })(this);
 
         // Game resume
-        window.onfocus = function () { 
+        window.onfocus = function () {
             SOCKET.emit('player available');
 
             IS_FOCUSED = true;
-        }; 
+        };
 		// --------------------------------------------------
 
 		this.is_game_started = true;
@@ -240,7 +240,7 @@ Retoosh.Game.prototype = {
 
     update: function() {
   		if(!this.is_game_started) return;
-        
+
         //if(this.isSpaceKeyPressed) this.avatar.plantBomb(this.map);
 
 		this.game.physics.arcade.collide(this.avatar, this.chat_panel);
@@ -287,14 +287,14 @@ Retoosh.Game.prototype = {
             var lefbottom = tiled_pos.col - 1 < 0?false:this.map.objects[tiled_pos.col - 1][tiled_pos.row + 1]?this.map.objects[tiled_pos.col - 1][tiled_pos.row + 1].type:false;
             var rigtop = tiled_pos.col + 1 >= this.map.cols?false:this.map.objects[tiled_pos.col + 1][tiled_pos.row - 1]?this.map.objects[tiled_pos.col + 1][tiled_pos.row - 1].type:false;
             var rigbottom = tiled_pos.col + 1 >= this.map.cols?false:this.map.objects[tiled_pos.col + 1][tiled_pos.row + 1]?this.map.objects[tiled_pos.col + 1][tiled_pos.row + 1].type:false;
-            
+
 			switch(keys_direction){
 				case "none":
 					final_direction = "idle";
 					break;
 				case "left":
 					// inner tile check: move bomberman to the tile center
-					if(in_tile_x > 0.55) 
+					if(in_tile_x > 0.55)
 						final_direction = keys_direction;
 					// outer tile check: check next tile on the way
 					else {
@@ -600,7 +600,7 @@ Retoosh.Game.prototype = {
                     }
                 }
             };
-             
+
 
 
 
@@ -680,7 +680,7 @@ Retoosh.Game.prototype = {
 					case "up": animation_id = 3; break;
 					case "down": animation_id = 4; break;
 				}
-                
+
                 if(final_direction==="uncertain")
                     animation_id=5;
 
@@ -730,9 +730,9 @@ Retoosh.Game.prototype = {
 		console.log(bomberman.serial," in explosion", bomberman.is_infire);
 
         if (bomberman.is_infire == 0) {
-            bomberman.countInFire();    
+            bomberman.countInFire();
         }
-        
+
         bomberman.is_infire++;
         if(bomberman.is_invincible) return;
         if (bomberman.is_infire > 12 && !bomberman.is_dying && !bomberman.is_dead) {
@@ -751,10 +751,10 @@ Retoosh.Game.prototype = {
 
 		//avatar.die( this.nicknames[this.avatar.serial] );
 	},
-    
+
     onBombInExplosion: function(object, explosion) {
         //console.log("onBombInExplosion", object);
-        if (object.type == "bomb") object.emitExplosion();    
+        if (object.type == "bomb") object.emitExplosion();
     },
 
 	onAvatarCollectPowerup: function(avatar, collected_powerup){
@@ -805,21 +805,21 @@ Retoosh.Game.prototype = {
 
         if( this.direction == "right" && this.cursors.left.isDown && this.cursors.right.isDown) {
             keys_direction = "left";
-            return keys_direction;    
+            return keys_direction;
         } else if( this.direction == "down" && this.cursors.up.isDown && this.cursors.down.isDown) {
             keys_direction = "up";
-            return keys_direction;    
+            return keys_direction;
         } else {
             this.direction = "none";
         }
-        
+
 		if( this.cursors.left.isDown ){
 			if( this.cursors.up.isDown )
 				keys_direction = "upleft";
 			else if( this.cursors.down.isDown)
 				keys_direction = "downleft";
 			else if( this.cursors.right.isDown )
-				keys_direction = "right"; 
+				keys_direction = "right";
 			else
 				keys_direction = "left";
 
@@ -966,7 +966,7 @@ Retoosh.Game.prototype = {
             }
             */
         }
-            
+
 
 		// resume countdowns of all bombs and powerups
 		for( var col = 0; col < this.map.cols; col++ ){

@@ -28,7 +28,7 @@ function Bomberman(game){
 	this.is_dead = true;
     this.is_infire = 0;
 
-	this.width = TILE_SIZE * 1.15;
+	this.width = TILE_SIZE * 1.25;
 	this.scale.y = this.scale.x;
 	this.anchor = { x: 0.5, y: 0.5 };
 

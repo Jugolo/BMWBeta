@@ -23,7 +23,7 @@ function UpperMenu( game ){
 	greet_group.y = (this.height - greet_group.height) * 0.5;
 
 	this.add(greet_group);
-    
+
     // sign out button
     var signout_btn = new UIButton(this.game, 180, 40, 0x575859, 'LOG OUT');
     signout_btn.x = Retoosh.WIDTH - signout_btn.width - 20;
@@ -73,18 +73,21 @@ function UpperMenu( game ){
 	    borderRadius: 100,
         placeHolder: "  NickName"
 	});
-    
+
     nickname_tf.x = greet_group.x + greet_group.width + 30;
     nickname_tf.y = (this.height - greet_group.height) * 0.5;
-    
+
     nickname_tf.keyListener = function (evt) {
         this.value = this.domElement.value;
         if (evt.keyCode === 13) {
             if (this.focusOutOnEnter) {
                 this.endFocus();
             }
-            var nickname = this.value;
-            USERNAME = nickname == "" ? "Guest" : nickname;
+            var nickname = this.value.trim();
+						if(!nickname){
+							return;
+						}
+            USERNAME = "Guest*"+nickname;
 
             SOCKET.emit("room request", {name: USERNAME});
             return;
@@ -96,7 +99,7 @@ function UpperMenu( game ){
     }
 
     if(window.sessionStorage['nickname']) {
-        nickname_tf.visible = false;    
+        nickname_tf.visible = false;
     }
 
 	//nickname_tf.x = nickname_lbl.width + 20;
@@ -153,9 +156,9 @@ function UpperMenu( game ){
 
 		this.state = state;
 	};
-    
+
     var nickname = window.sessionStorage['nickname'];
-    if (nickname == undefined) {     
+    if (nickname == undefined) {
 	    this.setState('unauthorized');
     } else {
         name_lbl.text = "  " + nickname;

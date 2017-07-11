@@ -16,4 +16,5 @@ var CONFIG = {
 
 	powerup_disappear_countdown: 15000,
 
+  connection_host : "https://bomberworldv3.herokuapp.com/",
 }

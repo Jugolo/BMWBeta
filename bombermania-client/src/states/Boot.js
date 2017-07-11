@@ -1,4 +1,4 @@
-var SOCKET = io();
+var SOCKET = io(CONFIG.connection_host);
 
 var Retoosh = {
     WIDTH: 1500,

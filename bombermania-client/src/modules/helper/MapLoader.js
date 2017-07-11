@@ -124,16 +124,16 @@ MapLoader.prototype.getAvailableTiles = function( tile_map, spawn_points ){
 MapLoader.prototype.randomizePowerup = function(){
 	var powerup_randomizer = Math.floor(Math.random() * 10000);
 
-	if(powerup_randomizer < 300){
+	if(powerup_randomizer < 15){
 		return 4; // protection
 	}
-	else if(powerup_randomizer < 2300){
+	else if(powerup_randomizer < 70){
 		return 2; // capacity
 	}
-	else if(powerup_randomizer < 4300){
+	else if(powerup_randomizer < 115){
 		return 1; // blast
 	}
-	else if(powerup_randomizer < 5300){
+	else if(powerup_randomizer < 80){
 		return 3; // speed
 	}
 	else return 0; // none

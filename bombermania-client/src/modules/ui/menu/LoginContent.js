@@ -1,6 +1,6 @@
 function LoginContent( game, content_width, content_height ){
 	Phaser.Group.call(this, game);
-    
+
     logged = false;
 
 	var font_style = { font: "28px CooperBlack", fill: "#FFFFFF" };
@@ -83,7 +83,7 @@ function LoginContent( game, content_width, content_height ){
     here_lbl.y = content_height * 0.75;
     here_lbl.fill = "#dfb72b";
     here_lbl.inputEnabled = true;
-    here_lbl.input.useHandCursor = true; 
+    here_lbl.input.useHandCursor = true;
     here_lbl.events.onInputDown.add(function() {
         window.open("http://bomberworld.io/forum/lostpassword.php", "_blank");
     }, this);
@@ -105,7 +105,7 @@ function LoginContent( game, content_width, content_height ){
             result_lbl.x = ( content_width - result_lbl.width ) * 0.5;
         } else if(json['status'] == 1) {
             var nickname = json['nickname'];
-                       
+
             window.sessionStorage["nickname"] = nickname;
             if(nickname == "") {
                 login_lbl.visible = false;
@@ -123,7 +123,7 @@ function LoginContent( game, content_width, content_height ){
                 SOCKET.emit("room request", {name: nickname});
                 logged = true;
             }
-            
+
         } else if(json['status'] == 2) {
             result_lbl.text = "Your account wasn't still allowed.";
             result_lbl.x = ( content_width - result_lbl.width ) * 0.5;
@@ -131,7 +131,7 @@ function LoginContent( game, content_width, content_height ){
             result_lbl.text = "The current password is invalid.\n           Please input again.";
             result_lbl.x = ( content_width - result_lbl.width ) * 0.5;
         }
-        
+
     });
 
     SOCKET.on('set result', function(data) {
@@ -160,7 +160,7 @@ function LoginContent( game, content_width, content_height ){
                 result_lbl.x = ( content_width - result_lbl.width ) * 0.5;
                 return;
             }
-            
+
             SOCKET.emit("web login", {status:'client_login', name: login_tf.value, pwd:password_tf.value});
         } else {
             if (nickname_tf.value == "") {
@@ -171,16 +171,19 @@ function LoginContent( game, content_width, content_height ){
             }
             SOCKET.emit("web login", {status:'name_set', name: login_tf.value, nickname: nickname_tf.value});
         }
-        
+
 	}
-    
+
     game.input.keyboard.addCallbacks(this, null, function(data) {
+			 if(!login_tf.game){
+				 return;
+			 }
         if(logged || window.sessionStorage['nickname'] != undefined) return;
         if (data.keyCode == 9 || data.keyCode == 13) {
             if(login_tf.focus) {
                 if (login_tf.value != "") {
                     login_tf.endFocus();
-                    password_tf.startFocus();    
+                    password_tf.startFocus();
                 }
             } else {
                 if (signin_button.label.text == "LOG IN") {
@@ -195,7 +198,7 @@ function LoginContent( game, content_width, content_height ){
                         result_lbl.x = ( content_width - result_lbl.width ) * 0.5;
                         return;
                     }
-                    
+
                     SOCKET.emit("web login", {status:'client_login', name: login_tf.value, pwd:password_tf.value});
                 } else {
                     if (nickname_tf.value == "") {
@@ -209,7 +212,7 @@ function LoginContent( game, content_width, content_height ){
             }
         }
     }, null);
-    
+
 	// var or_lbl = game.add.text(0, 0, "OR", font_style);
 	// or_lbl.x = ( content_width - or_lbl.width ) * 0.5;
 	// or_lbl.y = content_height * 0.7;
@@ -249,7 +252,7 @@ function LoginContent( game, content_width, content_height ){
 	// this.onFacebookLogin = function( user_data ){};
 	this.onRegularLogin = function( user_data ) {
     };
-    
+
     this.showNickNameField = function() {
         login_lbl.visible = false;
         login_tf.visible = false;

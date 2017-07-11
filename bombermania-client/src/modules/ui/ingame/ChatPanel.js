@@ -146,12 +146,28 @@ function PlayerPreview( game, id, name, serial, frags, color, self = false ){
         mute_btn.input.useHandCursor = true;
         mute_btn.events.onInputDown.add( function(){
             if (game.sound.mute === true) {
+							console.log("Turn the sound on");
                 game.sound.mute = false;
             } else {
+							console.log("Turn the sound off");
                 game.sound.mute = true;
             }
             mute_btn.key==='soundon'?mute_btn.loadTexture('soundoff',0):mute_btn.loadTexture('soundon',0);
         }, this );
+
+				if(name.indexOf("Guest*") == 0){
+					var reg = this.create(0, 0, "reg");
+					reg.height = this.height * 0.5;
+					reg.scale.x = reg.scale.y;
+					console.log(reg);
+					reg.x = name_label.x + name_label.width + 30 + mute_btn.width;
+					reg.y = (this.height - reg.height) * 0.5;
+					reg.inputEnabled = true;
+					reg.input.useHandCursor = true;
+					reg.events.onInputDown.add(function(){
+						window.location.href = "http://bomberworld.io/forum/register.php";
+					}, this);
+				}
     }
 
 	font_style.fontWeight = "normal";
@@ -163,7 +179,7 @@ function PlayerPreview( game, id, name, serial, frags, color, self = false ){
 	font_style.wordWrapWidth = Retoosh.WIDTH - Retoosh.HEIGHT - 60;
 	var message_label = game.add.text(0, 56, "", font_style);
 	this.add(message_label);
-    
+
 	this.setName = function( name ){
 		name_label.text = name;
 	}

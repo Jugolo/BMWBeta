@@ -3,7 +3,7 @@ Retoosh.Preloader = function (game) { this.game = game;};
 Retoosh.Preloader.prototype = {
   preload: function () {
 
-	  game.load.atlasJSONArray('ingame', '/assets/spritesheets/ingame.png', '/assets/spritesheets/ingame.json');
+	  game.load.atlasJSONArray('ingame', 'assets/spritesheets/ingame.png', 'assets/spritesheets/ingame.json');
 
 	  //game.load.image('background', 'assets/textures/background.png')
       game.load.image('header', 'assets/textures/header.png')
@@ -17,14 +17,16 @@ Retoosh.Preloader.prototype = {
       game.load.image('member_over', 'assets/textures/btn_member_over.png')
       game.load.image('community', 'assets/textures/btn_community.png')
       game.load.image('community_over', 'assets/textures/btn_community_over.png')
-	  game.load.image('soundon', 'assets/textures/soundon.png')
-	  game.load.image('soundoff', 'assets/textures/soundoff.png')
-	  game.load.image('donate_icon', 'assets/textures/donate_icon.png')
+	    game.load.image('soundon', 'assets/textures/soundon.png')
+      game.load.image('reg', "assets/textures/reg.png");
+	    game.load.image('soundoff', 'assets/textures/soundoff.png')
+	    game.load.image('donate_icon', 'assets/textures/donate_icon.png')
+      game.load.image('bguest', 'assets/textures/guest.png');
 
-	  game.load.audio('death_snd', '/assets/sounds/death.wav');
-	  game.load.audio('explosion_snd', '/assets/sounds/explosion.wav');
-	  game.load.audio('pickup_snd', '/assets/sounds/pickup.wav');
-	  game.load.audio('revive_snd', '/assets/sounds/revive.wav');
+	  game.load.audio('death_snd', 'assets/sounds/death.wav');
+	  game.load.audio('explosion_snd', 'assets/sounds/explosion.wav');
+	  game.load.audio('pickup_snd', 'assets/sounds/pickup.wav');
+	  game.load.audio('revive_snd', 'assets/sounds/revive.wav');
   },
   create: function () {
       this.game.state.start('Main');
