@@ -4,7 +4,7 @@ function controleGuestName(name){
   }
   
   if(name.length > 10){
-    return "Name is to long
+    return "Name is to long";
   }
 }
 
@@ -37,6 +37,8 @@ Retoosh.Guest.prototype = {
           }
 
           if(this.value.trim()){
+            var errmsg;
+            if((errmsg = controleGuestName(
             USERNAME = "Guest*"+this.value;
             console.log(USERNAME);
             SOCKET.emit("room request", {name: USERNAME});
