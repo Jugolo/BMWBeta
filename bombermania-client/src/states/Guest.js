@@ -1,3 +1,13 @@
+function controleGuestName(name){
+  if(name.length < 3){
+    return "Name is to short. you need to enter at last 3 charcter";
+  }
+  
+  if(name.length > 10){
+    return "Name is to long
+  }
+}
+
 Retoosh.Guest = function(game){
   this.game = game;
 };
